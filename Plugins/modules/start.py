@@ -63,8 +63,7 @@ async def must_join_channel(bot: Client, msg):
                             [
                                 [
                                     InlineKeyboardButton("ᴜᴘᴅᴀᴛᴇ ᴄʜᴀɴɴᴇʟ", url=link),
-                                    InlineKeyboardButton("ᴄᴏʟʟᴀʙ ᴄʜᴀɴɴᴇʟ ", url=link2)],
-                                    [InlineKeyboardButton("Joined", callback_data=f"joined")]
+                                    InlineKeyboardButton("ᴄᴏʟʟᴀʙ ᴄʜᴀɴɴᴇʟ ", url=link2)]
                             ]
                         )
                     )
