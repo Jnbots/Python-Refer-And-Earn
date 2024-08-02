@@ -6,30 +6,39 @@ import re
 from pyrogram.errors import UserNotParticipant
 from ..database import collection, add_refer_balance, add_default_balance
 from pyrogram.enums import ChatMemberStatus
+from Plugins.modules.withdraw import decrease_balance
 # Callback handler
-@Client.on_callback_query()
+@JN.on_callback_query()
 async def callback_all(client, query: CallbackQuery):
+    # print(query.data)
+    if query.data.startswith("approve"):
+        print("hii")
+        datas = query.data.split("_")
+        user_id = int(datas[1])
+        amount = float(datas[2])
+        upi_id = datas[-1]
     
-    match = re.match(r"^(approve|reject)_(\d+)_(\d+(\.\d+)?)_(.+)$", query.data)
-    # print("33",match)
-    if match:
-        action, user_id, amount, _, upi_id = match.groups()
-        print(user_id,action,amount,_,upi_id)
-        user_id = int(user_id)
-        amount = float(amount)
-        if action == "approve":
-            await JN.send_message(
-                user_id,
-                f"Your withdrawal request for INR {amount} has been approved."
-            )
-            await query.answer("Withdrawal approved.")
-        else:
-            collection.update_one({'user_id': user_id}, {'$inc': {'balance': amount}})
-            await JN.send_message(
-                user_id,
-                f"Your withdrawal request for INR {amount} has been rejected. The amount has been refunded to your balance."
-            )
-            await query.answer("Withdrawal rejected.")
+        print("Approve action", user_id, amount, upi_id)
+    
+        await JN.send_message(user_id,
+        f"Your withdrawal request for INR {amount} has been approved."
+    )
+        decrease_balance(user_id, amount)
+        await query.answer("Withdrawal approved.")
+
+    if query.data.startswith("reject"):
+        datas = query.data.split("_")
+        user_id = int(datas[1])
+        amount = float(datas[2])
+        upi_id = datas[-1]
+    
+        print("Reject action", user_id, amount, upi_id)
+        collection.update_one({'user_id': user_id}, {'$inc': {'balance': amount}})
+        await JN.send_message(user_id,f"Your withdrawal request for INR {amount} has been rejected. The amount has been refunded to your balance."
+    )
+        await query.answer("Withdrawal rejected.")
+    
+    
     if query.data.startswith("joined"):
         datas=query.data.split("_")
         user_id=int(datas[1].replace("{","").replace("}", ""))
