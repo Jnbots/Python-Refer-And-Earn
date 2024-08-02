@@ -28,7 +28,7 @@ async def withdrawal(bot, message):
     upi_id = msg2.text
 
     # Decrease the user's balance
-    decrease_balance(message.from_user.id, amount)
+    # decrease_balance(message.from_user.id, amount)
 
     # Send details to the owner for approval
     await bot.send_message(
